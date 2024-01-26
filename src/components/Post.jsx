@@ -1,43 +1,81 @@
 import styles from './Post.module.css';
-import { Comment } from "./Comment"
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+import { Comment } from "./Comment";
 import { Avatar } from './Avatar';
+import { useState } from 'react';
 
-export function Post(){
+export function Post({author, content, publishedAt, link}){
+    const [comments, setComments] = useState([
+        `Parabéns pelo Post ${author.name}👏🔥`,
+    ]);
+
+    const [newCommentText, setNewCommentText] = useState('');
+
+    const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
+        locale: ptBR,
+    })
+
+    const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+        locale: ptBR,
+        addSuffix: true,
+    });
+
+    function handleCreateNewComment() {
+        event.preventDefault();
+
+        setComments([...comments, newCommentText]);
+        setNewCommentText('');
+    }
+
+    function handleNewCommentChange() {
+        setNewCommentText(event.target.value);
+    }
+
+    function deleteComment(commentToDelete) {
+        const commentsWithoutDeletedOne = comments.filter(comment =>{
+            return comment !== commentToDelete;
+        })
+
+        setComments(commentsWithoutDeletedOne);
+    }
+    
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src='https://github.com/leckliss.png'/>
+                    <Avatar src={author.avatarUrl}/>
                     <div className={styles.authorInfo}>
-                        <strong>Erick Caique</strong>
-                        <span>Dev Full-Stack</span>
+                        <strong>{author.name}</strong>
+                        <span>{author.role}</span>
                     </div>
                 </div>
 
-                <time title='24 de Janeiro às 14:55h' dateTime='2024-01-24 14:55:38'>Publicado há 1h</time>
+                <time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
+                    {publishedDateRelativeToNow}
+                </time>
             </header>
 
             <div className={styles.content}>
-                <p> Hey visitante! 👋 </p>
-
-                <p> Sou um entusiasta de tecnologia e dev fullstack, estou começando na área e já utilizei diversas tecnologias! Ficou curioso ou gostaria de entrar em contato? </p>
-                <p> Acesse meu LinkedIn e Github para saber mais... </p>
-
-                <p> <a href='https://github.com/leckliss' target='_blank'> GitHub </a> </p>
-                <p> <a href='https://br.linkedin.com/in/erick-caique-091264221' target='_blank'> Linkedin </a> </p>
-
-                <p> 
-                    <a href=''>#fullstack</a> {' '}
-                    <a href=''>#deviniciante</a> {' '}
-                    <a href=''>#devjunior</a>
-                </p>
+                {content.map(line => {
+                    if (line.type === 'paragraph') {
+                        return <p key={line.content}>{line.content}</p>;
+                    } else if (line.type === 'linkedin') {
+                        return <p key={line.content}><a href={line.link} target='_blank'>{line.content}</a></p>
+                    } else if (line.type === 'github') {
+                        return <p key={line.content}><a href={line.link} target='_blank'>{line.content}</a></p>
+                    }
+                })}
             </div>
 
-            <form className={styles.commentForm}>
+            <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe seu feedback</strong>
 
                 <textarea 
+                    name='comment'
                     placeholder='Deixe um comentário'
+                    onChange={handleNewCommentChange}
+                    value={newCommentText}
                 />
 
                 <footer>
@@ -46,9 +84,15 @@ export function Post(){
             </form>
 
             <div className={styles.commentList}>
-                <Comment />
-                <Comment />
-                <Comment />
+                {comments.map(comment => {
+                    return (
+                        <Comment 
+                            key={comment} 
+                            content={comment} 
+                            onDeleteComment={deleteComment}
+                        />
+                    )
+                })}
             </div>
         </article>
     )
