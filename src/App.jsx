@@ -22,10 +22,6 @@ const posts = [
       {type: 'github', content: 'GitHub', link: 'https://github.com/leckliss'},
       {type: 'linkedin', content: 'LinkedIn', link: 'https://br.linkedin.com/in/erick-caique-091264221'}, 
     ],
-    // link: {
-    //   linkedin: 'https://br.linkedin.com/in/erick-caique-091264221',
-    //   github: 'https://github.com/leckliss',
-    // },
     publishedAt: new Date('2024-01-24 14:55:38'),
   },
   {
@@ -43,10 +39,6 @@ const posts = [
       {type: 'github', content: 'GitHub', link: 'https://github.com/thomasdevsp'},
       {type: 'linkedin', content: 'LinkedIn', link: 'https://br.linkedin.com/in/thomas-sampaio'}, 
     ],
-    // link: {
-    //   linkedin: 'https://br.linkedin.com/in/thomas-sampaio',
-    //   github: 'https://github.com/thomasdevsp',
-    // },
     publishedAt: new Date('2024-01-23 12:15:49'),
   },
 ]
